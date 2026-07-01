@@ -1,11 +1,29 @@
 use serde::{Deserialize, Serialize};
 
 fn default_true() -> bool { true }
+fn default_theme() -> String { "system".into() }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Collection {
     pub version: u32,
+    #[serde(default)]
+    pub settings: Settings,
     pub requests: Vec<Request>,
+}
+
+/// App-level, non-request settings persisted alongside the requests.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Settings {
+    /// "system" | "light" | "dark"
+    #[serde(default = "default_theme")]
+    pub theme: String,
+}
+
+impl Default for Settings {
+    fn default() -> Self {
+        Settings { theme: default_theme() }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

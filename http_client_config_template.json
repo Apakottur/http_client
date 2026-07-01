@@ -1,5 +1,6 @@
 {
-  "version": 1,
+  "version": 2,
+  "settings": { "theme": "system" },
   "requests": [
     {
       "id": "example-1",

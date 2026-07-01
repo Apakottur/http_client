@@ -9,7 +9,9 @@ export interface Request {
   id: string; name: string; method: string; url: string;
   queryParams: KeyValue[]; headers: KeyValue[]; auth: Auth; body: Body; sortKey: number;
 }
-export interface Collection { version: number; requests: Request[]; }
+export type Theme = "system" | "light" | "dark";
+export interface Settings { theme: Theme; }
+export interface Collection { version: number; settings: Settings; requests: Request[]; }
 export interface HttpResponse {
   status: number; statusText: string; timeMs: number; size: number;
   headers: KeyValue[]; body: string;

@@ -21,7 +21,7 @@ mod tests {
     use crate::model::*;
 
     fn sample() -> Collection {
-        Collection { version: 1, requests: vec![Request {
+        Collection { version: 1, settings: Settings::default(), requests: vec![Request {
             id: "a".into(), name: "n".into(), method: "GET".into(), url: "http://h".into(),
             query_params: vec![], headers: vec![], auth: Auth::default(), body: Body::default(), sort_key: 1,
         }]}

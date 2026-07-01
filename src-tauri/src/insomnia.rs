@@ -41,7 +41,7 @@ pub fn import_from_str(yaml: &str) -> Result<Collection, String> {
             name, method, url, query_params, headers, auth, body, sort_key,
         });
     }
-    Ok(Collection { version: 1, requests })
+    Ok(Collection { version: 1, settings: Settings::default(), requests })
 }
 
 fn kvs(v: Option<&serde_yaml::Value>) -> Vec<KeyValue> {

@@ -1,12 +1,21 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { collection, selectedRequest } from "./lib/store";
-  import { loadCollection, saveCollection } from "./lib/api";
+  import { get } from "svelte/store";
+  import { collection, selectedRequest, configPath } from "./lib/store";
+  import { loadCollection, saveCollection, getConfigPath } from "./lib/api";
+  import { apply as applyTheme, watchSystem } from "./lib/theme";
   import Sidebar from "./lib/components/Sidebar.svelte";
   import RequestEditor from "./lib/components/RequestEditor.svelte";
 
+  // Re-apply the theme whenever the setting changes (initial load, toggle, config switch).
+  $: applyTheme($collection.settings.theme);
+
   onMount(async () => {
-    try { collection.set(await loadCollection()); } catch (e) { console.error(e); }
+    try {
+      collection.set(await loadCollection());
+      configPath.set(await getConfigPath());
+    } catch (e) { console.error(e); }
+    watchSystem(() => get(collection).settings.theme);
   });
 
   async function save() {

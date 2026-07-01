@@ -26,5 +26,5 @@ dist-ssr
 # SDD progress scratch
 .superpowers/
 
-# live collection with real secrets — never commit
-collection.json
+# live config (settings + requests) with real secrets — never commit
+http_client_config.json
