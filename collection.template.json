@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "requests": [
+    {
+      "id": "example-1",
+      "name": "Example | Get status",
+      "method": "GET",
+      "url": "https://httpbin.org/get",
+      "queryParams": [{ "name": "hello", "value": "world", "enabled": true }],
+      "headers": [{ "name": "Accept", "value": "application/json", "enabled": true }],
+      "auth": { "type": "none", "username": "", "password": "", "token": "" },
+      "body": { "type": "none", "json": "", "form": [], "multipart": [] },
+      "sortKey": 100
+    },
+    {
+      "id": "example-2",
+      "name": "Example | Post JSON",
+      "method": "POST",
+      "url": "https://httpbin.org/post",
+      "queryParams": [],
+      "headers": [{ "name": "Content-Type", "value": "application/json", "enabled": true }],
+      "auth": { "type": "bearer", "username": "", "password": "", "token": "example-token" },
+      "body": { "type": "json", "json": "{\n  \"hello\": \"world\"\n}", "form": [], "multipart": [] },
+      "sortKey": 200
+    }
+  ]
+}
