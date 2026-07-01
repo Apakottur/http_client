@@ -1,6 +1,6 @@
 <script lang="ts">
   import { get } from "svelte/store";
-  import { open } from "@tauri-apps/plugin-dialog";
+  import { open, save } from "@tauri-apps/plugin-dialog";
   import { collection, selectedId, configPath, drafts } from "../store";
   import { newRequest } from "../types";
   import type { Request } from "../types";
@@ -87,6 +87,15 @@
     try { await persist(); } catch (e) { console.error(e); }
   }
 
+  async function switchTo(path: string) {
+    try {
+      collection.set(await setConfigPath(path));
+      drafts.set(new Set());
+      configPath.set(await getConfigPath());
+      selectedId.set(null);
+    } catch (e) { console.error(e); }
+  }
+
   async function pickConfig() {
     if (!(await guardLeaveDraft())) return;
     const current = get(configPath);
@@ -95,14 +104,21 @@
       defaultPath: current || undefined,
       filters: [{ name: "Config", extensions: ["json"] }],
     });
-    if (typeof selected === "string") {
-      try {
-        collection.set(await setConfigPath(selected));
-        drafts.set(new Set());
-        configPath.set(await getConfigPath());
-        selectedId.set(null);
-      } catch (e) { console.error(e); }
-    }
+    if (typeof selected === "string") await switchTo(selected);
+  }
+
+  // Create a new project = a new config file. set_config_path seeds it from the
+  // template when the chosen path doesn't exist yet.
+  async function newProject() {
+    if (!(await guardLeaveDraft())) return;
+    const current = get(configPath);
+    let path = await save({
+      defaultPath: current || undefined,
+      filters: [{ name: "Config", extensions: ["json"] }],
+    });
+    if (!path) return;
+    if (!path.endsWith(".json")) path += ".json";
+    await switchTo(path);
   }
 </script>
 
@@ -165,6 +181,7 @@
   <div class="side-foot">
     <button class="icon-btn" title="Toggle light/dark" on:click={toggleTheme}>{isDark ? "☀️" : "🌙"}</button>
     <button class="config-btn" title={$configPath} on:click={pickConfig}>📄 {configName}</button>
+    <button class="icon-btn" title="New project (new config file)" on:click={newProject}>＋</button>
   </div>
 </div>
 

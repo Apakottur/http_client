@@ -1,10 +1,10 @@
 # Potatoh 🥔
 
-A lightweight [Tauri](https://tauri.app) desktop HTTP client — a small, fast
-replacement for Insomnia. Send requests; manage method, URL, query params,
-headers, auth, and body; read the response. Saved requests live in a sidebar.
+A lightweight [Tauri](https://tauri.app) desktop HTTP client. Send requests; manage
+method, URL, query params, headers, auth, and body; read the response. Requests are
+organized with tags and live in a sidebar.
 
-- **Backend:** Rust — `reqwest` (HTTP), `serde` (model), `serde_yaml` (Insomnia import).
+- **Backend:** Rust — `reqwest` (HTTP), `serde` / `serde_json` (model + config).
 - **Frontend:** Svelte 5 + Vite + TypeScript, in a native Tauri window.
 
 ## Prerequisites
@@ -96,14 +96,7 @@ setting (`system`); once you toggle, the explicit choice is saved to
 cd src-tauri && cargo test
 ```
 
-Covers the Insomnia → model conversion and the request-building helpers.
-
-## Importing from Insomnia
-
-The importer (`src-tauri/src/insomnia.rs`) maps an Insomnia v5 YAML export —
-URL, method, headers, query params, basic/bearer auth, and JSON /
-form-urlencoded / multipart bodies — into the model in `src-tauri/src/model.rs`.
-Folder/group entries and the `environments` / `cookieJar` sections are ignored.
+Covers config persistence and the request-building helpers.
 
 ## Not included in v1
 

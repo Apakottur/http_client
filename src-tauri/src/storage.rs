@@ -30,7 +30,7 @@ mod tests {
 
     #[test]
     fn load_seeds_from_template_when_missing() {
-        let dir = std::env::temp_dir().join(format!("scratch_test_{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("potatoh_test_{}", std::process::id()));
         fs::create_dir_all(&dir).unwrap();
         let tmpl = dir.join("template.json");
         let live = dir.join("collection.json");
@@ -44,7 +44,7 @@ mod tests {
 
     #[test]
     fn save_then_load_roundtrips() {
-        let dir = std::env::temp_dir().join(format!("scratch_test_rt_{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("potatoh_test_rt_{}", std::process::id()));
         fs::create_dir_all(&dir).unwrap();
         let live = dir.join("c.json");
         let tmpl = dir.join("t.json");

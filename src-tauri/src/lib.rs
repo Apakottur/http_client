@@ -1,5 +1,4 @@
 mod model;
-mod insomnia;
 mod storage;
 mod http;
 
@@ -89,14 +88,6 @@ async fn send_request(request: Request) -> Result<HttpResponse, String> {
     http::send(&request).await
 }
 
-#[tauri::command]
-fn import_insomnia(state: State<'_, AppState>, path: String) -> Result<Collection, String> {
-    let yaml = std::fs::read_to_string(&path).map_err(|e| format!("read {path}: {e}"))?;
-    let coll = insomnia::import_from_str(&yaml)?;
-    storage::save(&state.path(), &coll)?;
-    Ok(coll)
-}
-
 /// Absolute path of the config file currently in use (for display in the UI).
 #[tauri::command]
 fn get_config_path(state: State<'_, AppState>) -> String {
@@ -132,7 +123,6 @@ pub fn run() {
         load_collection,
         save_collection,
         send_request,
-        import_insomnia,
         get_config_path,
         set_config_path
     ])

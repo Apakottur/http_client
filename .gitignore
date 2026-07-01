@@ -23,7 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# SDD progress scratch
+# Superpowers.
 .superpowers/
 
 # live config (settings + requests) with real secrets — never commit
