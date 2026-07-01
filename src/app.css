@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light;
   --bg: #ffffff;
   --fg: #1c1c1e;
   --muted: #888;
@@ -19,6 +20,7 @@
 }
 
 :root[data-theme="dark"] {
+  color-scheme: dark;
   --bg: #1e1e20;
   --fg: #e4e4e7;
   --muted: #9a9aa2;
@@ -40,7 +42,10 @@
 
 * { box-sizing: border-box; }
 body { margin: 0; font: 13px/1.4 system-ui, sans-serif; color: var(--fg); background: var(--bg); }
-.app { display: grid; grid-template-columns: 260px 1fr; height: 100vh; }
+.app { display: grid; grid-template-columns: 320px 6px 1fr; height: 100vh; }
+.resizer { cursor: col-resize; background: transparent; }
+.resizer:hover, .resizer.dragging { background: var(--accent); }
+.resizer:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 
 .sidebar { display: flex; flex-direction: column; border-right: 1px solid var(--border); overflow: hidden; }
 .side-head { display: flex; gap: 4px; padding: 8px; align-items: center; flex: none; }
@@ -92,3 +97,30 @@ table.kv input { width: 100%; }
 .status.ok { color: var(--ok); } .status.redir { color: var(--redir); } .status.err { color: var(--err); }
 .resp-body, pre.error { background: var(--panel-bg); padding: 8px; overflow: auto; white-space: pre-wrap; }
 .empty, .hint { padding: 20px; color: var(--muted); }
+
+/* Tag editor (request panel) */
+.tag-bar { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.tag-bar select { padding: 3px 6px; }
+.tag-bar select.missing { border-color: var(--err); color: var(--err); }
+.tag-bar .chk { display: inline-flex; align-items: center; gap: 3px; color: var(--muted); }
+
+/* Sidebar filters + groups */
+.filter-bar { display: flex; gap: 4px; padding: 0 8px 8px; flex: none; }
+.filter-bar select { flex: 1; min-width: 0; padding: 3px 5px; }
+.group-head {
+  display: flex; align-items: center; gap: 6px; width: 100%; text-align: left;
+  background: var(--bg); border: none; cursor: pointer; padding: 5px 8px;
+  color: var(--fg); font-weight: 600; position: sticky; top: 0; z-index: 1;
+}
+.group-head .caret { color: var(--muted); width: 10px; }
+.group-name { flex: 1; }
+.group-count { color: var(--muted); font-weight: 400; }
+.group .req-row { padding-left: 20px; }
+
+/* Tag badges on rows */
+.tagb { font-size: 9px; font-weight: 700; text-transform: uppercase; padding: 1px 4px; border-radius: 3px; }
+.tagb.env-dev { color: #3b82f6; background: rgba(59, 130, 246, 0.15); }
+.tagb.env-staging { color: #d97706; background: rgba(217, 119, 6, 0.15); }
+.tagb.env-prod { color: #dc2626; background: rgba(220, 38, 38, 0.15); }
+.tagb.role-admin { color: #8b5cf6; background: rgba(139, 92, 246, 0.18); }
+.tagb.role-user { color: #6b7280; background: rgba(107, 114, 128, 0.2); }

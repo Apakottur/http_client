@@ -8,9 +8,10 @@ export interface Body {
 export interface Request {
   id: string; name: string; method: string; url: string;
   queryParams: KeyValue[]; headers: KeyValue[]; auth: Auth; body: Body; sortKey: number;
+  topLevelTag: string; tags: string[];
 }
 export type Theme = "system" | "light" | "dark";
-export interface Settings { theme: Theme; }
+export interface Settings { theme: Theme; sidebarWidth: number; }
 export interface Collection { version: number; settings: Settings; requests: Request[]; }
 export interface HttpResponse {
   status: number; statusText: string; timeMs: number; size: number;
@@ -24,5 +25,6 @@ export function newRequest(): Request {
     auth: { type: "none", username: "", password: "", token: "" },
     body: { type: "none", json: "", form: [], multipart: [] },
     sortKey: Date.now(),
+    topLevelTag: "", tags: [],
   };
 }

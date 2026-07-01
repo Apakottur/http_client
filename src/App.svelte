@@ -10,6 +10,35 @@
   // Re-apply the theme whenever the setting changes (initial load, toggle, config switch).
   $: applyTheme($collection.settings.theme);
 
+  // Sidebar width: track the persisted value, but during a drag use the live value.
+  let dragging = false;
+  let width = 320;
+  $: if (!dragging) width = $collection.settings.sidebarWidth || 320;
+
+  function startResize(e: PointerEvent) {
+    e.preventDefault();
+    dragging = true;
+    const move = (ev: PointerEvent) => { width = Math.min(640, Math.max(200, ev.clientX)); };
+    const up = async () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      dragging = false;
+      const w = Math.round(width);
+      collection.update((c) => ({ ...c, settings: { ...c.settings, sidebarWidth: w } }));
+      try { await saveCollection(get(collection)); } catch (err) { console.error(err); }
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  }
+  function nudge(e: KeyboardEvent) {
+    const delta = e.key === "ArrowLeft" ? -16 : e.key === "ArrowRight" ? 16 : 0;
+    if (!delta) return;
+    e.preventDefault();
+    const w = Math.min(640, Math.max(200, Math.round(width) + delta));
+    collection.update((c) => ({ ...c, settings: { ...c.settings, sidebarWidth: w } }));
+    save();
+  }
+
   onMount(async () => {
     try {
       collection.set(await loadCollection());
@@ -30,8 +59,19 @@
 
 <svelte:window on:keydown={onKey} />
 
-<main class="app">
+<main class="app" style="grid-template-columns: {width}px 6px 1fr">
   <Sidebar />
+  <!-- svelte-ignore a11y_no_noninteractive_tabindex a11y_no_noninteractive_element_interactions -->
+  <div
+    class="resizer"
+    class:dragging
+    role="separator"
+    aria-orientation="vertical"
+    aria-label="Resize sidebar"
+    tabindex="0"
+    on:pointerdown={startResize}
+    on:keydown={nudge}
+  ></div>
   {#if $selectedRequest}
     {#key $selectedRequest.id}
       <RequestEditor request={$selectedRequest} />

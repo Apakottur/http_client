@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 
 fn default_true() -> bool { true }
 fn default_theme() -> String { "system".into() }
+fn default_sidebar_width() -> u32 { 320 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Collection {
@@ -18,11 +19,14 @@ pub struct Settings {
     /// "system" | "light" | "dark"
     #[serde(default = "default_theme")]
     pub theme: String,
+    /// Sidebar width in pixels.
+    #[serde(default = "default_sidebar_width")]
+    pub sidebar_width: u32,
 }
 
 impl Default for Settings {
     fn default() -> Self {
-        Settings { theme: default_theme() }
+        Settings { theme: default_theme(), sidebar_width: default_sidebar_width() }
     }
 }
 
@@ -43,6 +47,12 @@ pub struct Request {
     pub body: Body,
     #[serde(default)]
     pub sort_key: i64,
+    /// Required organizing tag (e.g. "Smitten", "Twilio"); empty until the user assigns one.
+    #[serde(default)]
+    pub top_level_tag: String,
+    /// Additional tags: environment ("dev"/"staging"/"prod"), "admin"/"user", etc.
+    #[serde(default)]
+    pub tags: Vec<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

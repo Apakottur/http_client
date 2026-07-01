@@ -39,6 +39,7 @@ pub fn import_from_str(yaml: &str) -> Result<Collection, String> {
         requests.push(Request {
             id: uuid::Uuid::new_v4().to_string(),
             name, method, url, query_params, headers, auth, body, sort_key,
+            top_level_tag: String::new(), tags: Vec::new(),
         });
     }
     Ok(Collection { version: 1, settings: Settings::default(), requests })

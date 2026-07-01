@@ -24,6 +24,7 @@ mod tests {
         Collection { version: 1, settings: Settings::default(), requests: vec![Request {
             id: "a".into(), name: "n".into(), method: "GET".into(), url: "http://h".into(),
             query_params: vec![], headers: vec![], auth: Auth::default(), body: Body::default(), sort_key: 1,
+            top_level_tag: "Smitten".into(), tags: vec!["dev".into()],
         }]}
     }
 
