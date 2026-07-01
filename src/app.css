@@ -48,9 +48,6 @@ body { margin: 0; font: 13px/1.4 system-ui, sans-serif; color: var(--fg); backgr
 .resizer:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 
 .sidebar { display: flex; flex-direction: column; border-right: 1px solid var(--border); overflow: hidden; }
-.side-title { display: flex; align-items: center; gap: 8px; padding: 10px 8px 2px; flex: none; }
-.side-title .app-name { font-weight: 700; font-size: 15px; }
-.logo { width: 22px; height: 22px; border-radius: 5px; flex: none; display: block; }
 .side-head { display: flex; gap: 4px; padding: 8px; align-items: center; flex: none; }
 .side-head input { flex: 1; min-width: 0; }
 .side-foot {

@@ -109,10 +109,6 @@
 <svelte:window on:click={() => (menuId = null)} />
 
 <div class="sidebar">
-  <div class="side-title">
-    <img class="logo" src="/logo.svg" alt="Potatoh" />
-    <span class="app-name">Potatoh</span>
-  </div>
   <div class="side-head">
     <input placeholder="Search…" bind:value={search} />
     <button on:click={add}>New</button>
