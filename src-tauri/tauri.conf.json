@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "Scratch",
+  "productName": "HTTP Client",
   "version": "0.1.0",
-  "identifier": "fun.smitten.scratch",
+  "identifier": "fun.smitten.httpclient",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Scratch",
+        "title": "HTTP Client",
         "width": 1100,
         "height": 720,
         "resizable": true,

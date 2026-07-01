@@ -7,7 +7,9 @@
   import { resolve as resolveTheme } from "../theme";
 
   let search = "";
-  $: sorted = [...$collection.requests].sort((a, b) => a.sortKey - b.sortKey);
+  $: sorted = [...$collection.requests].sort((a, b) =>
+    a.name.localeCompare(b.name, undefined, { sensitivity: "base", numeric: true })
+  );
   $: filtered = sorted.filter((r) => r.name.toLowerCase().includes(search.toLowerCase()));
   $: isDark = resolveTheme($collection.settings.theme) === "dark";
   $: configName = $configPath ? $configPath.split("/").pop() : "(default)";
@@ -29,8 +31,12 @@
   }
 
   async function pickConfig() {
+    const current = get(configPath);
     const selected = await open({
       multiple: false,
+      // Start the dialog in the current config file's folder (with it selected),
+      // not the process's working directory.
+      defaultPath: current || undefined,
       filters: [{ name: "Config", extensions: ["json"] }],
     });
     if (typeof selected === "string") {

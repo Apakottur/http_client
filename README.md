@@ -1,4 +1,4 @@
-# Scratch — a native HTTP client
+# HTTP Client
 
 A lightweight [Tauri](https://tauri.app) desktop HTTP client — a small, fast
 replacement for Insomnia. Send requests; manage method, URL, query params,
@@ -65,8 +65,8 @@ JSON file:
 **Which file the app uses**, in priority order:
 
 1. **`--config <path>`** on the command line, e.g.
-   `bun run tauri dev -- --config ~/work/api.json` (or `./scratch --config …` for a
-   built binary). Highest priority.
+   `bun run tauri dev -- --config ~/work/api.json` (or `./http-client --config …`
+   for a built binary). Highest priority.
 2. **The last file you picked** via the config selector in the sidebar. This choice
    is remembered in `~/.config/http_client/state.json` (honours `XDG_CONFIG_HOME`)
    so it survives restarts.
