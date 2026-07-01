@@ -1,12 +1,13 @@
 <script lang="ts">
   import { get } from "svelte/store";
   import { open } from "@tauri-apps/plugin-dialog";
-  import { collection, selectedId, configPath } from "../store";
+  import { collection, selectedId, configPath, drafts } from "../store";
   import { newRequest } from "../types";
   import type { Request } from "../types";
-  import { saveCollection, setConfigPath, getConfigPath } from "../api";
+  import { setConfigPath, getConfigPath } from "../api";
   import { resolve as resolveTheme } from "../theme";
   import { ENVS, envOf, topLevelTags } from "../tags";
+  import { persist, guardLeaveDraft, trySelect } from "../persist";
 
   let search = "";
   let mainFilter = "";
@@ -14,9 +15,15 @@
   let roleFilter = "";
   let collapsed = new Set<string>();
 
+  // Row action menu (⋮)
+  let menuId: string | null = null;
+  let menuX = 0;
+  let menuY = 0;
+
   $: isDark = resolveTheme($collection.settings.theme) === "dark";
   $: configName = $configPath ? $configPath.split("/").pop() : "(default)";
   $: topTags = topLevelTags($collection.requests);
+  $: menuReq = menuId ? $collection.requests.find((r) => r.id === menuId) ?? null : null;
 
   $: matches = $collection.requests.filter(
     (r) =>
@@ -46,23 +53,42 @@
     collapsed = new Set(collapsed);
   }
 
-  function add() {
-    const r = newRequest();
-    collection.update((c) => ({ ...c, requests: [...c.requests, r] }));
-    selectedId.set(r.id);
+  // Create a new draft request (in memory, unsaved until first manual save).
+  async function newDraft(req: Request) {
+    if (!(await guardLeaveDraft())) return;
+    collection.update((c) => ({ ...c, requests: [...c.requests, req] }));
+    drafts.update((s) => new Set(s).add(req.id));
+    selectedId.set(req.id);
   }
-  function del(id: string) {
+  function add() { newDraft(newRequest()); }
+  function duplicate(orig: Request) {
+    const copy: Request = { ...JSON.parse(JSON.stringify(orig)), id: crypto.randomUUID(), name: orig.name + " Copy" };
+    newDraft(copy);
+  }
+
+  async function del(id: string) {
+    const wasDraft = get(drafts).has(id);
     collection.update((c) => ({ ...c, requests: c.requests.filter((r) => r.id !== id) }));
+    drafts.update((s) => { const n = new Set(s); n.delete(id); return n; });
     if (get(selectedId) === id) selectedId.set(null);
+    if (!wasDraft) { try { await persist(); } catch (e) { console.error(e); } }
+  }
+
+  function openMenu(id: string, e: MouseEvent) {
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    menuX = rect.right;
+    menuY = rect.bottom + 2;
+    menuId = menuId === id ? null : id;
   }
 
   async function toggleTheme() {
     const next = isDark ? "light" : "dark";
     collection.update((c) => ({ ...c, settings: { ...c.settings, theme: next } }));
-    try { await saveCollection(get(collection)); } catch (e) { console.error(e); }
+    try { await persist(); } catch (e) { console.error(e); }
   }
 
   async function pickConfig() {
+    if (!(await guardLeaveDraft())) return;
     const current = get(configPath);
     const selected = await open({
       multiple: false,
@@ -72,6 +98,7 @@
     if (typeof selected === "string") {
       try {
         collection.set(await setConfigPath(selected));
+        drafts.set(new Set());
         configPath.set(await getConfigPath());
         selectedId.set(null);
       } catch (e) { console.error(e); }
@@ -79,7 +106,13 @@
   }
 </script>
 
+<svelte:window on:click={() => (menuId = null)} />
+
 <div class="sidebar">
+  <div class="side-title">
+    <img class="logo" src="/logo.svg" alt="Potatoh" />
+    <span class="app-name">Potatoh</span>
+  </div>
   <div class="side-head">
     <input placeholder="Search…" bind:value={search} />
     <button on:click={add}>New</button>
@@ -113,17 +146,19 @@
             <div
               class="req-row"
               class:active={$selectedId === r.id}
+              class:draft={$drafts.has(r.id)}
               role="button"
               tabindex="0"
-              on:click={() => selectedId.set(r.id)}
-              on:keydown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectedId.set(r.id); } }}
+              on:click={() => trySelect(r.id)}
+              on:keydown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); trySelect(r.id); } }}
             >
               <span class={"badge m-" + r.method.toLowerCase()}>{r.method}</span>
               {#if envOf(r.tags)}<span class={"tagb env-" + envOf(r.tags)}>{envOf(r.tags)}</span>{/if}
               {#if r.tags.includes("admin")}<span class="tagb role-admin">admin</span>{/if}
               {#if r.tags.includes("user")}<span class="tagb role-user">user</span>{/if}
               <span class="name">{r.name}</span>
-              <button class="del" on:click|stopPropagation={() => del(r.id)}>✕</button>
+              {#if $drafts.has(r.id)}<span class="draft-dot" title="Unsaved">●</span>{/if}
+              <button class="kebab" title="Actions" on:click|stopPropagation={(e) => openMenu(r.id, e)}>⋮</button>
             </div>
           {/each}
         {/if}
@@ -132,8 +167,14 @@
   </div>
 
   <div class="side-foot">
-    <img class="logo" src="/logo.svg" alt="Potatoh" title="Potatoh" />
     <button class="icon-btn" title="Toggle light/dark" on:click={toggleTheme}>{isDark ? "☀️" : "🌙"}</button>
     <button class="config-btn" title={$configPath} on:click={pickConfig}>📄 {configName}</button>
   </div>
 </div>
+
+{#if menuReq}
+  <div class="row-menu" style="left: {menuX}px; top: {menuY}px">
+    <button class="menu-item" on:click={() => { duplicate(menuReq); menuId = null; }}>Duplicate</button>
+    <button class="menu-item danger" on:click={() => { del(menuReq.id); menuId = null; }}>Delete</button>
+  </div>
+{/if}

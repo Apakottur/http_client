@@ -2,16 +2,21 @@
   import type { Body, MultipartField } from "../types";
   import { open } from "@tauri-apps/plugin-dialog";
   import KeyValueEditor from "./KeyValueEditor.svelte";
+  import JsonEditor from "./JsonEditor.svelte";
   export let body: Body;
+  /** Autosave hook — CodeMirror/dialog changes don't emit bubbling input events. */
+  export let onChange: (() => void) | undefined = undefined;
 
   function addMultipart(kind: "text" | "file") {
     const row: MultipartField = { name: "", value: "", kind, enabled: true };
     body.multipart = [...body.multipart, row];
+    onChange?.();
   }
   async function pickFile(row: MultipartField) {
     const selected = await open({ multiple: false });
     if (typeof selected === "string") row.value = selected;
     body.multipart = body.multipart;
+    onChange?.();
   }
 </script>
 
@@ -25,7 +30,7 @@
 </label>
 
 {#if body.type === "json"}
-  <textarea class="json" bind:value={body.json} spellcheck="false"></textarea>
+  <div class="json-editor"><JsonEditor bind:value={body.json} {onChange} /></div>
 {:else if body.type === "form"}
   <KeyValueEditor bind:rows={body.form} />
 {:else if body.type === "multipart"}

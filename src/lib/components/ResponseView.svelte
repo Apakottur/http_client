@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { HttpResponse } from "../types";
+  import JsonEditor from "./JsonEditor.svelte";
   export let response: HttpResponse | null;
   export let error: string | null;
   export let loading: boolean;
@@ -10,9 +11,10 @@
     if (s >= 300 && s < 400) return "redir";
     return "err";
   }
-  function pretty(text: string) {
-    try { return JSON.stringify(JSON.parse(text), null, 2); } catch { return text; }
+  function asJson(text: string): string | null {
+    try { return JSON.stringify(JSON.parse(text), null, 2); } catch { return null; }
   }
+  $: prettyJson = response ? asJson(response.body) : null;
 </script>
 
 {#if loading}
@@ -30,7 +32,11 @@
     <button class:active={tab === "headers"} on:click={() => (tab = "headers")}>Headers</button>
   </div>
   {#if tab === "body"}
-    <pre class="resp-body">{pretty(response.body)}</pre>
+    {#if prettyJson !== null}
+      {#key prettyJson}<div class="resp-json"><JsonEditor value={prettyJson} readonly /></div>{/key}
+    {:else}
+      <pre class="resp-body">{response.body}</pre>
+    {/if}
   {:else}
     <table class="kv">
       <tbody>

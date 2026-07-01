@@ -2,7 +2,8 @@
   import { onMount } from "svelte";
   import { get } from "svelte/store";
   import { collection, selectedRequest, configPath } from "./lib/store";
-  import { loadCollection, saveCollection, getConfigPath } from "./lib/api";
+  import { loadCollection, getConfigPath } from "./lib/api";
+  import { persist, saveSelected } from "./lib/persist";
   import { apply as applyTheme, watchSystem } from "./lib/theme";
   import Sidebar from "./lib/components/Sidebar.svelte";
   import RequestEditor from "./lib/components/RequestEditor.svelte";
@@ -25,7 +26,7 @@
       dragging = false;
       const w = Math.round(width);
       collection.update((c) => ({ ...c, settings: { ...c.settings, sidebarWidth: w } }));
-      try { await saveCollection(get(collection)); } catch (err) { console.error(err); }
+      try { await persist(); } catch (err) { console.error(err); }
     };
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", up);
@@ -36,7 +37,7 @@
     e.preventDefault();
     const w = Math.min(640, Math.max(200, Math.round(width) + delta));
     collection.update((c) => ({ ...c, settings: { ...c.settings, sidebarWidth: w } }));
-    save();
+    persist().catch((err) => console.error(err));
   }
 
   onMount(async () => {
@@ -48,9 +49,7 @@
   });
 
   async function save() {
-    let current: any;
-    collection.subscribe((c) => (current = c))();
-    try { await saveCollection(current); } catch (e) { console.error(e); }
+    try { await saveSelected(); } catch (e) { console.error(e); }
   }
   function onKey(e: KeyboardEvent) {
     if ((e.ctrlKey || e.metaKey) && e.key === "s") { e.preventDefault(); save(); }
