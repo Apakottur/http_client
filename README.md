@@ -1,4 +1,4 @@
-# HTTP Client
+# Potatoh 🥔
 
 A lightweight [Tauri](https://tauri.app) desktop HTTP client — a small, fast
 replacement for Insomnia. Send requests; manage method, URL, query params,
@@ -35,14 +35,26 @@ in the sidebar.
 auth / body, and hit **Send**. The response (status, time, size, pretty-printed
 body, headers) shows below. **Ctrl/⌘ + S** saves edits to your collection.
 
-## Build a standalone binary (optional)
+## Build a standalone binary / AppImage
+
+For an AppImage:
+
+```sh
+bun run appimage
+```
+
+Output: `src-tauri/target/release/bundle/appimage/Potatoh_<version>_amd64.AppImage`
+(runnable directly; needs `fuse2`/libfuse2, which most desktops have).
+
+The `appimage` script sets `APPIMAGE_EXTRACT_AND_RUN=1 NO_STRIP=1` because `linuxdeploy`
+(itself an AppImage) can otherwise fail to self-mount via FUSE on some setups.
+
+For all bundle types (`.deb` / `.rpm` / `.AppImage`) and the raw binary
+(`src-tauri/target/release/`):
 
 ```sh
 bun run tauri build
 ```
-
-Produces a native executable under `src-tauri/target/release/` plus installers
-(`.deb` / `.rpm` / `.AppImage`) under `src-tauri/target/release/bundle/`.
 
 ## Config file (settings + requests)
 
@@ -64,15 +76,13 @@ JSON file:
 
 **Which file the app uses**, in priority order:
 
-1. **`--config <path>`** on the command line, e.g.
-   `bun run tauri dev -- --config ~/work/api.json` (or `./http-client --config …`
-   for a built binary). Highest priority.
-2. **The last file you picked** via the config selector in the sidebar. This choice
+1. **The last file you picked** via the 📄 selector in the sidebar header. This choice
    is remembered in `~/.config/http_client/state.json` (honours `XDG_CONFIG_HOME`)
    so it survives restarts.
-3. **Default:** `http_client_config.json` at the repo root.
+2. **Default:** `http_client_config.json` at the repo root, seeded from the template
+   on first run.
 
-Switch files at runtime with the 📄 button in the sidebar header.
+Pick your config file once via the 📄 selector and it sticks; switch any time.
 
 ## Theme
 

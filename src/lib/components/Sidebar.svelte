@@ -132,6 +132,7 @@
   </div>
 
   <div class="side-foot">
+    <img class="logo" src="/logo.svg" alt="Potatoh" title="Potatoh" />
     <button class="icon-btn" title="Toggle light/dark" on:click={toggleTheme}>{isDark ? "☀️" : "🌙"}</button>
     <button class="config-btn" title={$configPath} on:click={pickConfig}>📄 {configName}</button>
   </div>

@@ -1,5 +1,5 @@
 {
-  "name": "http-client",
+  "name": "potatoh",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "tauri": "tauri",
+    "appimage": "APPIMAGE_EXTRACT_AND_RUN=1 NO_STRIP=1 tauri build --bundles appimage",
     "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
   },
   "devDependencies": {

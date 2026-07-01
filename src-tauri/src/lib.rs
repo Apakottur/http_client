@@ -58,25 +58,10 @@ fn remember_path(path: &Path) -> Result<(), String> {
     std::fs::write(&f, text).map_err(|e| format!("write {f:?} failed: {e}"))
 }
 
-/// Parse `--config <path>` / `--config=<path>` from the process arguments.
-fn cli_config_path() -> Option<PathBuf> {
-    let mut args = std::env::args().skip(1);
-    while let Some(a) = args.next() {
-        if a == "--config" {
-            return args.next().map(PathBuf::from);
-        }
-        if let Some(rest) = a.strip_prefix("--config=") {
-            return Some(PathBuf::from(rest));
-        }
-    }
-    None
-}
-
-/// Resolution order: CLI arg > remembered path > repo-root default.
+/// Resolution order: remembered path (set via the in-app file selector, cached in
+/// state.json) > repo-root default. Pick a config file once via the UI and it sticks.
 fn resolve_config_path() -> PathBuf {
-    cli_config_path()
-        .or_else(remembered_path)
-        .unwrap_or_else(default_config_path)
+    remembered_path().unwrap_or_else(default_config_path)
 }
 
 struct AppState {

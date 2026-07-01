@@ -1,0 +1,60 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFE0A3"/>
+      <stop offset="1" stop-color="#F2A23C"/>
+    </linearGradient>
+    <linearGradient id="potato" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E8B87C"/>
+      <stop offset="1" stop-color="#B4793C"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7CCB5A"/>
+      <stop offset="1" stop-color="#3F9236"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.32" cy="0.28" r="0.75">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- app-icon background -->
+  <rect x="0" y="0" width="1024" height="1024" rx="216" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1024" height="1024" rx="216" fill="url(#glow)"/>
+
+  <!-- soft ground shadow under the potato -->
+  <ellipse cx="512" cy="792" rx="250" ry="46" fill="#8a5a24" opacity="0.18"/>
+
+  <!-- potato body -->
+  <path fill="url(#potato)" d="
+    M 300 452
+    C 356 356, 520 322, 648 366
+    C 772 408, 812 494, 786 588
+    C 760 682, 636 742, 494 736
+    C 356 730, 246 656, 252 552
+    C 256 496, 270 456, 300 452 Z"/>
+
+  <!-- bottom shading for volume -->
+  <path fill="#8f5f2c" opacity="0.22" d="
+    M 300 620
+    C 380 712, 560 748, 690 690
+    C 640 736, 560 742, 494 736
+    C 386 728, 320 686, 300 620 Z"/>
+
+  <!-- upper-left highlight -->
+  <ellipse cx="410" cy="452" rx="120" ry="66" fill="#ffffff" opacity="0.22" transform="rotate(-24 410 452)"/>
+
+  <!-- potato eyes / dimples -->
+  <g fill="#7c5027" opacity="0.6">
+    <ellipse cx="420" cy="560" rx="18" ry="10" transform="rotate(28 420 560)"/>
+    <ellipse cx="560" cy="612" rx="20" ry="11" transform="rotate(-14 560 612)"/>
+    <ellipse cx="636" cy="520" rx="16" ry="9" transform="rotate(40 636 520)"/>
+    <ellipse cx="502" cy="500" rx="15" ry="9" transform="rotate(-6 502 500)"/>
+  </g>
+
+  <!-- sprout -->
+  <path stroke="#4E9B3E" stroke-width="16" stroke-linecap="round" fill="none"
+        d="M 566 372 C 566 320, 560 292, 540 268"/>
+  <path fill="url(#leaf)" d="M 540 268 C 486 250, 452 276, 452 320 C 506 330, 540 312, 540 268 Z"/>
+  <path fill="url(#leaf)" d="M 552 300 C 560 246, 604 226, 646 240 C 636 296, 596 314, 552 300 Z"/>
+</svg>
